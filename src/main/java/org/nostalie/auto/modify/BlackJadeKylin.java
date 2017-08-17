@@ -1,5 +1,7 @@
 package org.nostalie.auto.modify;
 
+import com.google.common.base.Preconditions;
+import com.google.common.collect.Lists;
 import javassist.CannotCompileException;
 import javassist.ClassPool;
 import javassist.CtClass;
@@ -7,9 +9,10 @@ import javassist.CtField;
 import javassist.CtNewMethod;
 import javassist.Modifier;
 import javassist.NotFoundException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
+import java.util.List;
 
 /**
  *
@@ -17,25 +20,59 @@ import java.lang.reflect.Method;
  */
 public class BlackJadeKylin {
 
-    public static void main(String[] args) throws NotFoundException, CannotCompileException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
-        ClassPool pool = ClassPool.getDefault();
-        CtClass cc = pool.makeClass("org.nostalie.auto.pojo.Test");
+    private static final Logger LOGGER = LoggerFactory.getLogger(BlackJadeKylin.class);
+    private static final String SET = "set";
+    private static final String GET = "get";
 
-        CtField cf = new CtField(pool.get("java.lang.String"),"name",cc);
-        cf.setModifiers(Modifier.PRIVATE);
+    private static final ClassPool DEFAULT_POOL = ClassPool.getDefault();
+    private Object data;
+    private List<String> names = Lists.newArrayList();
 
-        cc.addMethod(CtNewMethod.setter("setName",cf));
-        cc.addMethod((CtNewMethod.getter("getName",cf)));
-
-        cc.addField(cf, CtField.Initializer.constant(""));
-
-        Object result = cc.toClass().newInstance();
-
-        Method set = result.getClass().getMethod("setName", String.class);
-        set.invoke(result,"nostalie");
-        Method get = result.getClass().getMethod("getName");
-        String name = (String) get.invoke(result);
-
-        System.out.println(name);
+    private BlackJadeKylin(Builder builder){
+        this.data = builder.data;
+        this.names = builder.names;
     }
+
+    public static Builder builder(){
+        return new Builder();
+    }
+
+    public static class Builder {
+
+        private CtClass ctClass;
+        private Object data;
+        private List<String> names = Lists.newArrayList();
+
+        private Builder() {
+            try {
+                String name = KylinUtils.getRootPath() + KylinUtils.getUniqName();
+                ctClass = DEFAULT_POOL.makeClass(name);
+            } catch (Exception e) {
+                LOGGER.error("获取实例失败", e);
+                throw new RuntimeException("获取实例失败", e);
+            }
+        }
+
+        public Builder setField(Class<?> clazz, String name) throws NotFoundException, CannotCompileException {
+            Preconditions.checkNotNull(clazz);
+            Preconditions.checkNotNull(name);
+
+            CtField ctField = new CtField(DEFAULT_POOL.get(clazz.getName()), name,ctClass);
+            ctField.setModifiers(Modifier.PRIVATE);
+
+            ctClass.addMethod(CtNewMethod.setter(SET + KylinUtils.firstUppper(name),ctField));
+            ctClass.addMethod(CtNewMethod.getter(GET + KylinUtils.firstUppper(name),ctField));
+            ctClass.addField(ctField);
+            this.names.add(name);
+            return this;
+        }
+
+        public BlackJadeKylin build() throws CannotCompileException, IllegalAccessException, InstantiationException {
+            data = ctClass.toClass().newInstance();
+            return new BlackJadeKylin(this);
+        }
+    }
+
+
+
 }
