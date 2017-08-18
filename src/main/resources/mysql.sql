@@ -1,0 +1,1 @@
+select * from information_schema.columns where table_name='columns' and table_schema='information_schema'

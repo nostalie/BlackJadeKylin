@@ -14,6 +14,14 @@ public class KylinUtils {
         return BlackJadeKylin.class.getResource("/").getPath();
     }
 
+    public static String getPackageName(){
+        return getPackageName(BlackJadeKylin.class);
+    }
+
+    public static String getPackageName(Class<?> clazz){
+        return clazz.getPackage().getName();
+    }
+
     public static String getUniqName(){
         String base = "Nostaile";
         String random;
@@ -23,8 +31,12 @@ public class KylinUtils {
         return base + random;
     }
 
-    public static String firstUppper(String name){
+    public static String firstUpper(String name){
         Preconditions.checkArgument(name != null && !EMPTY_STRING.equals(name));
         return name.substring(0,1).toUpperCase() + name.substring(1);
+    }
+
+    public static String nullToEmpty(String s){
+        return s == null? "" : s;
     }
 }
