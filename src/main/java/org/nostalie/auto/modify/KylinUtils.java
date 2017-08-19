@@ -3,6 +3,8 @@ package org.nostalie.auto.modify;
 
 import com.google.common.base.Preconditions;
 
+import java.util.Map;
+
 /**
  * Created by nostalie on 17-8-17.
  */
@@ -38,5 +40,13 @@ public class KylinUtils {
 
     public static String nullToEmpty(String s){
         return s == null? "" : s;
+    }
+
+    public static boolean isEmpty(Iterable<?> iterable) {
+        return iterable == null || !iterable.iterator().hasNext();
+    }
+
+    public static boolean isEmpty(Map<?,?> map){
+        return map == null || map.size() == 0;
     }
 }

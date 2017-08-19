@@ -1,9 +1,8 @@
 package org.nostalie.auto.mysql;
 
-import org.nostalie.auto.modify.BlackJadeKylin;
+import org.nostalie.auto.pojo.CRUDContext;
 import org.nostalie.auto.pojo.ColumnInfo;
 import org.nostalie.auto.pojo.DatabaseInfo;
-import org.nostalie.auto.pojo.QueryContext;
 import org.nostalie.auto.pojo.TableInfo;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
@@ -29,7 +28,7 @@ public class QuickSand extends JdbcDaoSupport {
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
 
-    public QuickSand(QueryContext context) {
+    public QuickSand(CRUDContext context) {
         DatabaseInfo databaseInfo = context.getDatabaseInfo();
         dataSource = new DriverManagerDataSource(databaseInfo.getUrl(), databaseInfo.getUserName(), databaseInfo.getPassword());
     }
@@ -76,7 +75,7 @@ public class QuickSand extends JdbcDaoSupport {
         TableInfo tableInfo = new TableInfo();
         tableInfo.setTableName("kylin_t");
         tableInfo.setDatabaseName("dbtest");
-        QueryContext context = new QueryContext();
+        CRUDContext context = new CRUDContext();
         context.setDatabaseInfo(databaseInfo);
         context.setTableInfo(tableInfo);
 

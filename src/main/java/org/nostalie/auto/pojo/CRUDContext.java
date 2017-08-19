@@ -5,10 +5,23 @@ import org.nostalie.auto.modify.BlackJadeKylin;
 /**
  * Created by nostalie on 17-8-18.
  */
-public class QueryContext {
+public class CRUDContext {
     private DatabaseInfo databaseInfo;
     private TableInfo tableInfo;
     private RowBounds rowBounds;
+    /**
+     * insert sql 需要的插入实例
+     * delete sql 不需要此字段
+     * update sql 需要的set k=v 实例
+     * select sql 不需要此字段
+     */
+    private BlackJadeKylin kylin;
+    /**
+     * insert sql 不需要此字段
+     * delete sql 拼接where 条件字段
+     * update sql 拼接where 条件字段
+     * select sql 拼接where 条件字段
+     */
     private BlackJadeKylin condition;
 
     public DatabaseInfo getDatabaseInfo() {
@@ -35,6 +48,14 @@ public class QueryContext {
         this.rowBounds = rowBounds;
     }
 
+    public BlackJadeKylin getKylin() {
+        return kylin;
+    }
+
+    public void setKylin(BlackJadeKylin kylin) {
+        this.kylin = kylin;
+    }
+
     public BlackJadeKylin getCondition() {
         return condition;
     }
@@ -45,10 +66,11 @@ public class QueryContext {
 
     @Override
     public String toString() {
-        return "QueryContext{" +
+        return "CRUDContext{" +
                 "databaseInfo=" + databaseInfo +
                 ", tableInfo=" + tableInfo +
                 ", rowBounds=" + rowBounds +
+                ", kylin=" + kylin +
                 ", condition=" + condition +
                 '}';
     }
