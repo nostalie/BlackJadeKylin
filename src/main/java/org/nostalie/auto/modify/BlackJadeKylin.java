@@ -28,7 +28,7 @@ public class BlackJadeKylin {
     private static final ClassPool DEFAULT_POOL = ClassPool.getDefault();
     private Object data;
     //key=属性名 value=属性类型
-    private Map<String, Class<?>> map = Maps.newHashMap();
+    private Map<String, Class<?>> map = Maps.newLinkedHashMap();
 
     private BlackJadeKylin(Builder builder) {
         this.data = builder.data;
@@ -43,7 +43,7 @@ public class BlackJadeKylin {
 
         private CtClass ctClass;
         private Object data;
-        private Map<String, Class<?>> map = Maps.newConcurrentMap();
+        private Map<String, Class<?>> map = Maps.newLinkedHashMap();
 
         private Builder() {
             try {
@@ -75,7 +75,7 @@ public class BlackJadeKylin {
         }
     }
 
-    public <V> BlackJadeKylin set(String name, V value, Class<V> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public <V> BlackJadeKylin set(String name, V value, Class<? extends V> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Preconditions.checkNotNull(name);
         if (clazz != null) {
             if (clazz != map.get(name)) {
@@ -90,8 +90,12 @@ public class BlackJadeKylin {
         return this;
     }
 
+    public <V> BlackJadeKylin set(String name,V value) throws NoSuchMethodException, IllegalAccessException, InvocationTargetException {
+        return set(name,value,null);
+    }
+
     @SuppressWarnings("unchecked")
-    public <V> V get(String name, Class<V> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+    public <V> V get(String name, Class<? extends V> clazz) throws NoSuchMethodException, InvocationTargetException, IllegalAccessException {
         Preconditions.checkNotNull(name);
         if (clazz != null) {
             if (clazz != map.get(name)) {

@@ -9,7 +9,7 @@ public class RowBounds {
 
     public RowBounds(){}
 
-    public RowBounds(int limit,int offset){
+    public RowBounds(int offset,int limit){
         this.limit = limit;
         this.offset = offset;
     }

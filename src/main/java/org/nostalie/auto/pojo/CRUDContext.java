@@ -6,6 +6,7 @@ import org.nostalie.auto.modify.BlackJadeKylin;
  * Created by nostalie on 17-8-18.
  */
 public class CRUDContext {
+    private String requestId;
     private DatabaseInfo databaseInfo;
     private TableInfo tableInfo;
     private RowBounds rowBounds;
@@ -64,10 +65,19 @@ public class CRUDContext {
         this.condition = condition;
     }
 
+    public String getRequestId() {
+        return requestId;
+    }
+
+    public void setRequestId(String requestId) {
+        this.requestId = requestId;
+    }
+
     @Override
     public String toString() {
         return "CRUDContext{" +
-                "databaseInfo=" + databaseInfo +
+                "requestId='" + requestId + '\'' +
+                ", databaseInfo=" + databaseInfo +
                 ", tableInfo=" + tableInfo +
                 ", rowBounds=" + rowBounds +
                 ", kylin=" + kylin +

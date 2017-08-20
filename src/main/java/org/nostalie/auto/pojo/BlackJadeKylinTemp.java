@@ -1,8 +1,10 @@
 package org.nostalie.auto.pojo;
 
 import javassist.*;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.nostalie.auto.modify.BlackJadeKylin;
 
+import java.io.IOException;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.util.Date;
@@ -11,7 +13,7 @@ import java.util.Date;
  * Created by nostalie on 17-8-15.
  */
 public class BlackJadeKylinTemp {
-    public static void main(String[] args) throws NotFoundException, CannotCompileException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException {
+    public static void main(String[] args) throws NotFoundException, CannotCompileException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, IOException {
 //        ClassPool pool = ClassPool.getDefault();
 //        CtClass cc = pool.makeClass("org.nostalie.auto.pojo.Test");
 //
@@ -33,8 +35,9 @@ public class BlackJadeKylinTemp {
 //        System.out.println(name);
 
         Date date = new Date();
-        BlackJadeKylin kylin = BlackJadeKylin.builder().setField("date",Date.class).build();
+        final BlackJadeKylin kylin = BlackJadeKylin.builder().setField("date",Date.class).build();
         kylin.set("date",date,Date.class);
-        System.out.println(kylin.get("date"));
+        ObjectMapper mapper = new ObjectMapper();
+        System.out.println(mapper.writeValueAsString(kylin));
     }
 }
