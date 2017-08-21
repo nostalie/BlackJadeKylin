@@ -6,6 +6,7 @@ import java.util.List;
  * Created by nostalie on 17-8-18.
  */
 public class TableInfo {
+    private int tableId;
     private String databaseName;
     private String tableName;
     private List<ColumnInfo> columnInfoList;
@@ -34,10 +35,19 @@ public class TableInfo {
         this.tableName = tableName;
     }
 
+    public int getTableId() {
+        return tableId;
+    }
+
+    public void setTableId(int tableId) {
+        this.tableId = tableId;
+    }
+
     @Override
     public String toString() {
         return "TableInfo{" +
-                "databaseName='" + databaseName + '\'' +
+                "tableId=" + tableId +
+                ", databaseName='" + databaseName + '\'' +
                 ", tableName='" + tableName + '\'' +
                 ", columnInfoList=" + columnInfoList +
                 '}';

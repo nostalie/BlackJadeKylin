@@ -4,11 +4,20 @@ package org.nostalie.auto.pojo;
  * Created by nostalie on 17-8-18.
  */
 public class DatabaseInfo {
+
+    private static final String URL = "jdbc:mysql://%s:%s?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull";
+
+    private int databaseId;
     private String host;
     private String port;
     private String userName;
     private String password;
     private String url;
+
+    public String makeMySQLURL(){
+        this.url = String.format(URL,this.host,this.port);
+        return this.url;
+    }
 
     public String getHost() {
         return host;
@@ -50,10 +59,19 @@ public class DatabaseInfo {
         this.url = url;
     }
 
+    public int getDatabaseId() {
+        return databaseId;
+    }
+
+    public void setDatabaseId(int databaseId) {
+        this.databaseId = databaseId;
+    }
+
     @Override
     public String toString() {
         return "DatabaseInfo{" +
-                "host='" + host + '\'' +
+                "databaseId=" + databaseId +
+                ", host='" + host + '\'' +
                 ", port='" + port + '\'' +
                 ", userName='" + userName + '\'' +
                 ", password='" + password + '\'' +

@@ -29,15 +29,19 @@ public class QuickSand extends JdbcDaoSupport {
 
     private DataSource dataSource;
     private JdbcTemplate jdbcTemplate;
+    private CRUDContext context;
 
     public QuickSand(CRUDContext context) {
         DatabaseInfo databaseInfo = context.getDatabaseInfo();
         dataSource = new DriverManagerDataSource(databaseInfo.getUrl(), databaseInfo.getUserName(), databaseInfo.getPassword());
+        this.context = context;
         setDataSource(dataSource);
         jdbcTemplate = getJdbcTemplate();
     }
 
-    public List<ColumnInfo> getColumns(final String tableName, final String dbName) {
+    public List<ColumnInfo> getColumns() {
+        final String tableName = context.getTableInfo().getTableName();
+        final String dbName = context.getTableInfo().getDatabaseName();
         return jdbcTemplate.query(DESC_TABLE_SQL, new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 ps.setString(1, tableName);
@@ -59,7 +63,7 @@ public class QuickSand extends JdbcDaoSupport {
         });
     }
 
-    public List<BlackJadeKylin> query(final CRUDContext context) {
+    public List<BlackJadeKylin> query() {
         final List<ColumnInfo> columnInfoList = context.getTableInfo().getColumnInfoList();
         final String sql;
         if (context.getRowBounds() != null) {
@@ -94,7 +98,7 @@ public class QuickSand extends JdbcDaoSupport {
         });
     }
 
-    public List<BlackJadeKylin> queryWithCondition(final CRUDContext context) {
+    public List<BlackJadeKylin> queryWithCondition() {
         final List<ColumnInfo> columnInfoList = context.getTableInfo().getColumnInfoList();
         final String sql;
         if (context.getRowBounds() != null) {
@@ -138,7 +142,7 @@ public class QuickSand extends JdbcDaoSupport {
         });
     }
 
-    public int insert(final CRUDContext context) {
+    public int insert() {
         final String sql = JoinSQL.on(context).insertSQL().toString();
         return jdbcTemplate.update(sql, new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
@@ -158,7 +162,7 @@ public class QuickSand extends JdbcDaoSupport {
         });
     }
 
-    public int delete(final CRUDContext context) {
+    public int delete() {
         final String sql = JoinSQL.on(context).deleteSQL().withCondition().toString();
         return jdbcTemplate.update(sql, new PreparedStatementSetter() {
             BlackJadeKylin condition = context.getCondition();
@@ -178,7 +182,7 @@ public class QuickSand extends JdbcDaoSupport {
         });
     }
 
-    public int update(final CRUDContext context) {
+    public int update() {
         final String sql = JoinSQL.on(context).updateSQL().withCondition().toString();
         return jdbcTemplate.update(sql, new PreparedStatementSetter() {
             BlackJadeKylin kylin = context.getKylin();
@@ -254,7 +258,7 @@ public class QuickSand extends JdbcDaoSupport {
         condition.set("id", 49, int.class);
         context.setKylin(kylin);
         context.setCondition(condition);
-        int query = quickSand.update(context);
+        int query = quickSand.update();
         //List<BlackJadeKylin> kylins = quickSand.query(context);
        // System.out.println("size" + kylins.size());
         //       System.out.println(query.size());

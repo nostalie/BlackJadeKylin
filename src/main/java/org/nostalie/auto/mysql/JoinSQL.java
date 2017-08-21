@@ -213,7 +213,7 @@ public class JoinSQL {
         context.setTableInfo(tableInfo);
 
         QuickSand quickSand = new QuickSand(context);
-        List<ColumnInfo> columns = quickSand.getColumns(context.getTableInfo().getTableName(), context.getTableInfo().getDatabaseName());
+        List<ColumnInfo> columns = quickSand.getColumns();
         System.out.println("columns is: " + mapper.writeValueAsString(columns));
         context.getTableInfo().setColumnInfoList(columns);
 
@@ -238,7 +238,7 @@ public class JoinSQL {
         context.setCondition(condition);
 
         //int query = quickSand.delete(context);
-        List<BlackJadeKylin> kylins = quickSand.queryWithCondition(context);
+        List<BlackJadeKylin> kylins = quickSand.queryWithCondition();
         System.out.println(kylins);
     }
 }

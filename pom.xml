@@ -13,7 +13,27 @@
         <org.slf4j.version>1.7.5</org.slf4j.version>
         <logback.version>1.0.13</logback.version>
         <org.springframework.version>3.1.4.RELEASE</org.springframework.version>
+
+        <qunar.nexus.releases>http://nexus.corp.qunar.com/nexus/content/repositories/releases</qunar.nexus.releases>
+        <qunar.nexus.snapshots>http://nexus.corp.qunar.com/nexus/content/repositories/snapshots</qunar.nexus.snapshots>
     </properties>
+
+    <distributionManagement>
+
+        <repository>
+            <id>releases</id>
+            <name>Qunar Nexus Releases</name>
+            <url>${qunar.nexus.releases}</url>
+        </repository>
+
+        <snapshotRepository>
+            <uniqueVersion>false</uniqueVersion>
+            <id>snapshots</id>
+            <name>Qunar Nexus Snapshots</name>
+            <url>${qunar.nexus.snapshots}</url>
+        </snapshotRepository>
+
+    </distributionManagement>
 
     <dependencies>
         <dependency>

@@ -1,6 +1,7 @@
 package org.nostalie.auto.pojo;
 
 import org.nostalie.auto.modify.BlackJadeKylin;
+import org.nostalie.auto.mysql.QuickSand;
 
 /**
  * Created by nostalie on 17-8-18.
@@ -24,6 +25,8 @@ public class CRUDContext {
      * select sql 拼接where 条件字段
      */
     private BlackJadeKylin condition;
+
+    private QuickSand quickSand;
 
     public DatabaseInfo getDatabaseInfo() {
         return databaseInfo;
@@ -73,6 +76,14 @@ public class CRUDContext {
         this.requestId = requestId;
     }
 
+    public QuickSand getQuickSand() {
+        return quickSand;
+    }
+
+    public void setQuickSand(QuickSand quickSand) {
+        this.quickSand = quickSand;
+    }
+
     @Override
     public String toString() {
         return "CRUDContext{" +
@@ -82,6 +93,7 @@ public class CRUDContext {
                 ", rowBounds=" + rowBounds +
                 ", kylin=" + kylin +
                 ", condition=" + condition +
+                ", quickSand=" + quickSand +
                 '}';
     }
 }
