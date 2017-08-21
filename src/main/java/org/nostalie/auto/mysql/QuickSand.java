@@ -59,12 +59,8 @@ public class QuickSand extends JdbcDaoSupport {
         });
     }
 
-    private List<BlackJadeKylin> query(final CRUDContext context) {
-        String tableName = context.getTableInfo().getTableName();
-        String databaseName = context.getTableInfo().getDatabaseName();
-        final List<ColumnInfo> columnInfoList = getColumns(tableName, databaseName);
-        context.getTableInfo().setColumnInfoList(columnInfoList);
-        final BlackJadeKylin kylin = KylinUtils.createKylin(columnInfoList);
+    public List<BlackJadeKylin> query(final CRUDContext context) {
+        final List<ColumnInfo> columnInfoList = context.getTableInfo().getColumnInfoList();
         final String sql;
         if (context.getRowBounds() != null) {
             sql = JoinSQL.on(context).selectSQL().withLimit().toString();
@@ -83,11 +79,11 @@ public class QuickSand extends JdbcDaoSupport {
             }
         }, new RowMapper<BlackJadeKylin>() {
             public BlackJadeKylin mapRow(ResultSet rs, int rowNum) throws SQLException {
+                BlackJadeKylin kylin = BlackJadeKylin.createKylin(columnInfoList);
                 try {
                     for (ColumnInfo columnInfo : columnInfoList) {
                         String name = columnInfo.getColumnName();
-                        String type = columnInfo.getDataType().toLowerCase();
-                        kylin.set(name, JavaType.getMap().get(type).get(rs, name));
+                        kylin.set(name, rs.getObject(name));
                     }
                     return kylin;
                 } catch (Exception e) {
@@ -98,12 +94,8 @@ public class QuickSand extends JdbcDaoSupport {
         });
     }
 
-    private List<BlackJadeKylin> queryWithCondition(final CRUDContext context) {
-        String tableName = context.getTableInfo().getTableName();
-        String databaseName = context.getTableInfo().getDatabaseName();
-        final List<ColumnInfo> columnInfoList = getColumns(tableName, databaseName);
-        context.getTableInfo().setColumnInfoList(columnInfoList);
-        final BlackJadeKylin kylin = KylinUtils.createKylin(columnInfoList);
+    public List<BlackJadeKylin> queryWithCondition(final CRUDContext context) {
+        final List<ColumnInfo> columnInfoList = context.getTableInfo().getColumnInfoList();
         final String sql;
         if (context.getRowBounds() != null) {
             sql = JoinSQL.on(context).selectSQL().withCondition().withLimit().toString();
@@ -115,7 +107,7 @@ public class QuickSand extends JdbcDaoSupport {
             RowBounds rowBounds = context.getRowBounds();
             int count = 1;
             public void setValues(PreparedStatement ps) throws SQLException {
-                for (Iterator<String> iterator = condition.getMap().keySet().iterator(); iterator.hasNext(); count++) {
+                for (Iterator<String> iterator = condition.getType().keySet().iterator(); iterator.hasNext(); count++) {
                     try {
                         ps.setObject(count, condition.get(iterator.next()));
                     } catch (Exception e) {
@@ -131,11 +123,11 @@ public class QuickSand extends JdbcDaoSupport {
             }
         }, new RowMapper<BlackJadeKylin>() {
             public BlackJadeKylin mapRow(ResultSet rs, int rowNum) throws SQLException {
+                BlackJadeKylin kylin = BlackJadeKylin.createKylin(columnInfoList);
                 try {
                     for (ColumnInfo columnInfo : columnInfoList) {
                         String name = columnInfo.getColumnName();
-                        String type = columnInfo.getDataType().toLowerCase();
-                        kylin.set(name, JavaType.getMap().get(type).get(rs, name), JavaType.getMap().get(type).getJavaType());
+                        kylin.set(name, rs.getObject(name));
                     }
                     return kylin;
                 } catch (Exception e) {
@@ -151,7 +143,7 @@ public class QuickSand extends JdbcDaoSupport {
         return jdbcTemplate.update(sql, new PreparedStatementSetter() {
             public void setValues(PreparedStatement ps) throws SQLException {
                 BlackJadeKylin kylin = context.getKylin();
-                Map<String, Class<?>> map = kylin.getMap();
+                Map<String, Class<?>> map = kylin.getType();
                 int count = 1;
                 for (Iterator<String> iterator = map.keySet().iterator(); iterator.hasNext(); count++) {
                     try {
@@ -173,7 +165,7 @@ public class QuickSand extends JdbcDaoSupport {
             int count = 1;
 
             public void setValues(PreparedStatement ps) throws SQLException {
-                for (Iterator<String> iterator = condition.getMap().keySet().iterator(); iterator.hasNext(); count++) {
+                for (Iterator<String> iterator = condition.getType().keySet().iterator(); iterator.hasNext(); count++) {
                     try {
                         ps.setObject(count, condition.get(iterator.next()));
                     } catch (Exception e) {
@@ -193,7 +185,7 @@ public class QuickSand extends JdbcDaoSupport {
             BlackJadeKylin condition = context.getCondition();
             int count = 1;
             public void setValues(PreparedStatement ps) throws SQLException {
-                for (Iterator<String> iterator = kylin.getMap().keySet().iterator(); iterator.hasNext(); count++) {
+                for (Iterator<String> iterator = kylin.getType().keySet().iterator(); iterator.hasNext(); count++) {
                     try {
                         ps.setObject(count, kylin.get(iterator.next()));
                     } catch (Exception e) {
@@ -201,7 +193,7 @@ public class QuickSand extends JdbcDaoSupport {
                         throw new RuntimeException("update sql 设置值失败", e);
                     }
                 }
-                for (Iterator<String> iterator = condition.getMap().keySet().iterator(); iterator.hasNext(); count++) {
+                for (Iterator<String> iterator = condition.getType().keySet().iterator(); iterator.hasNext(); count++) {
                     try {
                         ps.setObject(count, condition.get(iterator.next()));
                     } catch (Exception e) {

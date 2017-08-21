@@ -1,14 +1,21 @@
 package org.nostalie.auto.mysql;
 
 import com.google.common.base.Preconditions;
+import com.google.common.collect.Maps;
 import org.nostalie.auto.modify.BlackJadeKylin;
 import org.nostalie.auto.modify.KylinUtils;
 import org.nostalie.auto.pojo.ColumnInfo;
 import org.nostalie.auto.pojo.CRUDContext;
+import org.nostalie.auto.pojo.DatabaseInfo;
+import org.nostalie.auto.pojo.RowBounds;
+import org.nostalie.auto.pojo.TableInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 /**
@@ -45,7 +52,7 @@ public class JoinSQL {
 
     public JoinSQL selectSQL() {
         try {
-            KylinUtils.verifyContext(context);
+            verifyContext(context);
             List<ColumnInfo> columnInfoList = context.getTableInfo().getColumnInfoList();
             Preconditions.checkNotNull(columnInfoList,"列信息不能为空");
             StringBuilder sb = new StringBuilder();
@@ -71,12 +78,12 @@ public class JoinSQL {
 
     public JoinSQL insertSQL(){
         try {
-            KylinUtils.verifyContext(context);
+            verifyContext(context);
             Preconditions.checkNotNull(context.getKylin(),"insert 语句必须有插入实例,kylin 不能为空");
-            Preconditions.checkArgument(!KylinUtils.isEmpty(context.getKylin().getMap()),"构建insert语句，插入字段不能为空");
+            Preconditions.checkArgument(!KylinUtils.isEmpty(context.getKylin().getType()),"构建insert语句，插入字段不能为空");
             String tableName = context.getTableInfo().getDatabaseName() + SPOT + context.getTableInfo().getTableName();
             BlackJadeKylin kylin = context.getKylin();
-            Set<String> columnNames = kylin.getMap().keySet();
+            Set<String> columnNames = kylin.getType().keySet();
             StringBuilder key = new StringBuilder();
             StringBuilder value = new StringBuilder();
             for(String name : columnNames){
@@ -98,7 +105,7 @@ public class JoinSQL {
 
     public JoinSQL deleteSQL(){
         try{
-            KylinUtils.verifyContext(context);
+            verifyContext(context);
             String tableName = context.getTableInfo().getDatabaseName() + SPOT + context.getTableInfo().getTableName();
             sql = String.format(BASE_DELETE,tableName);
             return this;
@@ -110,12 +117,12 @@ public class JoinSQL {
 
     public JoinSQL updateSQL(){
         try {
-            KylinUtils.verifyContext(context);
+            verifyContext(context);
             Preconditions.checkNotNull(context.getKylin(),"update 语句必须有更新实例,kylin 不能为空");
-            Preconditions.checkArgument(!KylinUtils.isEmpty(context.getKylin().getMap()),"构建update语句，更新字段不能为空");
+            Preconditions.checkArgument(!KylinUtils.isEmpty(context.getKylin().getType()),"构建update语句，更新字段不能为空");
             String tableName = context.getTableInfo().getDatabaseName() + SPOT + context.getTableInfo().getTableName();
             BlackJadeKylin kylin = context.getKylin();
-            Set<String> columnNames = kylin.getMap().keySet();
+            Set<String> columnNames = kylin.getType().keySet();
             StringBuilder sb = new StringBuilder();
             for(String name : columnNames){
                 sb.append(name)
@@ -135,9 +142,9 @@ public class JoinSQL {
     public JoinSQL withCondition() {
         try {
             Preconditions.checkNotNull(context.getCondition(),"进行条件拼接，则condition字段不能为空");
-            Preconditions.checkArgument(!KylinUtils.isEmpty(context.getCondition().getMap()),"构建where语句，条件字段不能为空");
+            Preconditions.checkArgument(!KylinUtils.isEmpty(context.getCondition().getType()),"构建where语句，条件字段不能为空");
             BlackJadeKylin condition = context.getCondition();
-            Set<String> columnNames = condition.getMap().keySet();
+            Set<String> columnNames = condition.getType().keySet();
             StringBuilder sb = new StringBuilder();
             sb.append(this.sql)
                     .append(SPACE)
@@ -171,8 +178,67 @@ public class JoinSQL {
         }
     }
 
+    private void verifyContext(CRUDContext context){
+        Preconditions.checkNotNull(context,"拼接sql 上下文信息不能为空");
+        Preconditions.checkNotNull(context.getTableInfo(),"table 信息不能为空");
+        Preconditions.checkArgument(!KylinUtils.nullToEmpty(context.getTableInfo().getDatabaseName()).equals(EMPTY),"拼接sql数据库名不能为空");
+        Preconditions.checkArgument(!KylinUtils.nullToEmpty(context.getTableInfo().getTableName()).equals(EMPTY),"拼接sql表名不能为空");
+    }
+
     @Override
     public String toString() {
         return this.sql;
+    }
+
+    private static final String HOST = "127.0.0.1";
+    private static final String PORT = "3306";
+    private static final String URL = "jdbc:mysql://%s:%s?useUnicode=true&amp;characterEncoding=UTF-8&amp;zeroDateTimeBehavior=convertToNull";
+    private static final String USERNAME = "nostalie";
+    private static final String PASSWORD = "lsroot";
+
+    public static void main(String[] args) throws Exception {
+        DatabaseInfo databaseInfo = new DatabaseInfo();
+        databaseInfo.setHost(HOST);
+        databaseInfo.setPort(PORT);
+        databaseInfo.setUserName(USERNAME);
+        databaseInfo.setPassword(PASSWORD);
+        databaseInfo.setUrl(String.format(URL, HOST, PORT));
+        TableInfo tableInfo = new TableInfo();
+        tableInfo.setTableName("kylin_t");
+        tableInfo.setDatabaseName("dbtest");
+        CRUDContext context = new CRUDContext();
+        context.setDatabaseInfo(databaseInfo);
+        context.setTableInfo(tableInfo);
+
+        QuickSand quickSand = new QuickSand(context);
+        List<ColumnInfo> columns = quickSand.getColumns(context.getTableInfo().getTableName(), context.getTableInfo().getDatabaseName());
+        context.getTableInfo().setColumnInfoList(columns);
+
+        RowBounds rowBounds = new RowBounds(0, 5);
+        context.setRowBounds(rowBounds);
+
+        BlackJadeKylin kylin = BlackJadeKylin.builder()
+                .setField("create_time",Date.class)
+                .setField("id",int.class)
+                .setField("name",String.class)
+                .setField("age",int.class)
+                .setField("salary", BigDecimal.class).build();
+        kylin.set("create_time",new Date())
+                .set("id",3)
+                .set("name","zhangjian")
+                .set("age",23)
+                .set("salary",new BigDecimal("123.12343"));
+
+        BlackJadeKylin condition = BlackJadeKylin.builder().setField("id", int.class).build();
+        condition.set("id", 3, int.class);
+        context.setKylin(kylin);
+        context.setCondition(condition);
+
+        //int query = quickSand.delete(context);
+        List<BlackJadeKylin> kylins = quickSand.queryWithCondition(context);
+        for(BlackJadeKylin kylin1: kylins){
+            System.out.println(kylin1.get("create_time"));
+        }
+        System.out.println(kylins);
     }
 }

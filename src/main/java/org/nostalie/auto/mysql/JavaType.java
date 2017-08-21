@@ -1,7 +1,11 @@
 package org.nostalie.auto.mysql;
 
 import com.google.common.collect.Maps;
+import org.codehaus.jackson.JsonGenerator;
+import org.nostalie.auto.modify.BlackJadeKylin;
 
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
 import java.math.BigDecimal;
 import java.sql.ResultSet;
 import java.sql.SQLException;
@@ -17,52 +21,26 @@ import static org.nostalie.auto.modify.KylinUtils.VERTICAL;
  */
 public enum JavaType {
 
-    INT("int|tinyint",int.class){
-        @Override
-        @SuppressWarnings("unchecked")
-        public Integer get(ResultSet resultSet, String name) throws SQLException {
-            return  resultSet.getInt(name);
-        }
-    },
-    STRING("varchar",String.class){
-        @Override
-        @SuppressWarnings("unchecked")
-        public String get(ResultSet resultSet, String name) throws SQLException {
-            return resultSet.getString(name);
-        }
-    },
-    DATE("timestamp", Date.class){
-        @Override
-        @SuppressWarnings("unchecked")
-        public Date get(ResultSet resultSet, String name) throws SQLException {
-            return resultSet.getDate(name);
-        }
-    },
-    DECIMAL("decimal", BigDecimal.class){
-        @Override
-        @SuppressWarnings("unchecked")
-        public BigDecimal get(ResultSet resultSet, String name) throws SQLException {
-            return resultSet.getBigDecimal(name);
-        }
-    };
+    INT("int|tinyint", int.class),
+    STRING("varchar", String.class),
+    DATE("timestamp", Date.class),
+    DECIMAL("decimal", BigDecimal.class);
 
     private String mysqlType;
     private Class<?> javaType;
-    private static Map<String,JavaType> map = Maps.newHashMap();
+    private static Map<String, JavaType> map = Maps.newHashMap();
 
     static {
-        for(JavaType type : JavaType.values()){
+        for (JavaType type : JavaType.values()) {
             String mysqlType = type.mysqlType;
             List<String> types = new ArrayList<String>(VERTICAL.splitToList(mysqlType));
-            for(String t : types) {
+            for (String t : types) {
                 map.put(t, type);
             }
         }
     }
 
-    abstract public <V> V get(ResultSet resultSet, String name) throws SQLException;
-
-    JavaType(String mysqlType,Class<?> javaType){
+    JavaType(String mysqlType, Class<?> javaType) {
         this.mysqlType = mysqlType;
         this.javaType = javaType;
     }

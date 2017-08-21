@@ -20,6 +20,8 @@ public class ColumnInfo {
     private String columnKey;
     //字段描述
     private String columnComment;
+    //前端展示的名字
+    private String displayName;
 
     public String getTableSchema() {
         return tableSchema;
@@ -85,6 +87,27 @@ public class ColumnInfo {
         this.columnComment = columnComment;
     }
 
+    public String getDisplayName() {
+        if(displayName == null){
+            makeDisplayName();
+        }
+        return displayName;
+    }
+
+    public void setDisplayName(String displayName) {
+        this.displayName = displayName;
+    }
+
+    public String makeDisplayName(){
+        if(columnComment!= null && columnComment.length()<=10){
+            this.displayName = columnComment;
+            return columnComment;
+        }else {
+            this.displayName = columnName;
+            return columnName;
+        }
+    }
+
     @Override
     public String toString() {
         return "ColumnInfo{" +
@@ -96,6 +119,7 @@ public class ColumnInfo {
                 ", dataType='" + dataType + '\'' +
                 ", columnKey='" + columnKey + '\'' +
                 ", columnComment='" + columnComment + '\'' +
+                ", displayName='" + displayName + '\'' +
                 '}';
     }
 }
