@@ -2,6 +2,7 @@ package org.nostalie.auto.mysql;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.nostalie.auto.modify.BlackJadeKylin;
 import org.nostalie.auto.modify.KylinUtils;
 import org.nostalie.auto.pojo.ColumnInfo;
@@ -197,6 +198,7 @@ public class JoinSQL {
     private static final String PASSWORD = "lsroot";
 
     public static void main(String[] args) throws Exception {
+        ObjectMapper mapper = new ObjectMapper();
         DatabaseInfo databaseInfo = new DatabaseInfo();
         databaseInfo.setHost(HOST);
         databaseInfo.setPort(PORT);
@@ -212,6 +214,7 @@ public class JoinSQL {
 
         QuickSand quickSand = new QuickSand(context);
         List<ColumnInfo> columns = quickSand.getColumns(context.getTableInfo().getTableName(), context.getTableInfo().getDatabaseName());
+        System.out.println("columns is: " + mapper.writeValueAsString(columns));
         context.getTableInfo().setColumnInfoList(columns);
 
         RowBounds rowBounds = new RowBounds(0, 5);
@@ -236,9 +239,6 @@ public class JoinSQL {
 
         //int query = quickSand.delete(context);
         List<BlackJadeKylin> kylins = quickSand.queryWithCondition(context);
-        for(BlackJadeKylin kylin1: kylins){
-            System.out.println(kylin1.get("create_time"));
-        }
         System.out.println(kylins);
     }
 }
