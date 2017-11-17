@@ -4,6 +4,9 @@ import org.nostalie.auto.modify.BlackJadeKylin;
 import org.nostalie.auto.mysql.QuickSand;
 
 /**
+ * 初始化需要 Host Port UserName Password DatabaseName TableName(必要参数)
+ * Kylin Condition RequestId RowBounds(非必要参数)
+ *
  * Created by nostalie on 17-8-18.
  */
 public class CRUDContext {
@@ -27,6 +30,90 @@ public class CRUDContext {
     private BlackJadeKylin condition;
 
     private QuickSand quickSand;
+
+    private CRUDContext(){}
+
+    private CRUDContext (Builder builder){
+        this.requestId = builder.requestId;
+        this.databaseInfo = builder.databaseInfo;
+        this.tableInfo = builder.tableInfo;
+        this.rowBounds = builder.rowBounds;
+        this.condition = builder.condition;
+        this.kylin = builder.kylin;
+    }
+
+    public static Builder builder(){
+        return new Builder();
+    }
+    public static class Builder{
+        private String requestId;
+        private DatabaseInfo databaseInfo;
+        private TableInfo tableInfo;
+        private RowBounds rowBounds;
+        private BlackJadeKylin condition;
+        private BlackJadeKylin kylin;
+
+        private Builder(){
+            this.databaseInfo = new DatabaseInfo();
+            this.tableInfo = new TableInfo();
+        }
+
+        public Builder setDatabaseId(int databaseId){
+            this.databaseInfo.setDatabaseId(databaseId);
+            return this;
+        }
+        public Builder setHost(String host){
+            this.databaseInfo.setHost(host);
+            return this;
+        }
+        public Builder setPort(String port){
+            this.databaseInfo.setPort(port);
+            return this;
+        }
+        public Builder setUserName(String userName){
+            this.databaseInfo.setUserName(userName);
+            return this;
+        }
+        public Builder setPassword(String password){
+            this.databaseInfo.setPassword(password);
+            return this;
+        }
+        public Builder setURL(String url){
+            this.databaseInfo.setUrl(url);
+            return this;
+        }
+        public Builder setDatabaseName(String databaseName){
+            this.tableInfo.setDatabaseName(databaseName);
+            return this;
+        }
+        public Builder setTableName(String tableName){
+            this.tableInfo.setTableName(tableName);
+            return this;
+        }
+        public Builder setTableId(int tableId){
+            this.tableInfo.setTableId(tableId);
+            return this;
+        }
+        public Builder setRequestId(String requestId){
+            this.requestId = requestId;
+            return this;
+        }
+        public Builder setKylin(BlackJadeKylin kylin){
+            this.kylin = kylin;
+            return this;
+        }
+        public Builder setCondition(BlackJadeKylin condition){
+            this.condition = condition;
+            return this;
+        }
+        public Builder setRowBounds(RowBounds rowBounds){
+            this.rowBounds = rowBounds;
+            return this;
+        }
+        public CRUDContext build(){
+            return new CRUDContext(this);
+        }
+    }
 
     public DatabaseInfo getDatabaseInfo() {
         return databaseInfo;

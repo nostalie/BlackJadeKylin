@@ -21,7 +21,7 @@ import java.util.Date;
 import java.util.Map;
 
 /**
- * Created by nostalie on 17-8-21.
+ *@author nostalie on 17-8-21.
  */
 public class KylinSerializer extends JsonSerializer<BlackJadeKylin> {
 
@@ -40,7 +40,7 @@ public class KylinSerializer extends JsonSerializer<BlackJadeKylin> {
                     jsonGenerator.writeObjectField(name, blackJadeKylin.get(name));
                 }
             } catch (Exception e) {
-                LOGGER.error("BlackJadeKylin json序列化失败,BlackJadeKylin: {}",blackJadeKylin,e);
+                LOGGER.debug("BlackJadeKylin json序列化失败,BlackJadeKylin: {}",blackJadeKylin,e);
                 throw new RuntimeException("BlackJadeKylin json序列化失败");
             }
         }

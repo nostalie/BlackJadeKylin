@@ -1,5 +1,6 @@
 package org.nostalie.auto.mysql;
 
+import com.google.common.base.Preconditions;
 import com.google.common.collect.Maps;
 import org.codehaus.jackson.JsonGenerator;
 import org.nostalie.auto.modify.BlackJadeKylin;
@@ -17,11 +18,12 @@ import java.util.Map;
 import static org.nostalie.auto.modify.KylinUtils.VERTICAL;
 
 /**
- * Created by nostalie on 17-8-20.
+ * @author nostalie on 17-8-20.
  */
 public enum JavaType {
 
     INT("int|tinyint", int.class),
+    LONG("bigint",long.class),
     STRING("varchar", String.class),
     DATE("timestamp", Date.class),
     DECIMAL("decimal", BigDecimal.class);
@@ -49,8 +51,9 @@ public enum JavaType {
         return mysqlType;
     }
 
-    public Class<?> getJavaType() {
-        return javaType;
+    public static Class<?> getJavaType(String mysqlType) {
+        Preconditions.checkNotNull(mysqlType);
+        return map.get(mysqlType.toLowerCase()).javaType;
     }
 
     public static Map<String, JavaType> getMap() {

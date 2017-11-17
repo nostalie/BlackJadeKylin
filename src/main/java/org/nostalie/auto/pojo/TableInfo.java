@@ -3,7 +3,7 @@ package org.nostalie.auto.pojo;
 import java.util.List;
 
 /**
- * Created by nostalie on 17-8-18.
+ * @author nostalie on 17-8-18.
  */
 public class TableInfo {
     private int tableId;

@@ -9,11 +9,12 @@ import org.nostalie.auto.pojo.ColumnInfo;
 
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static org.nostalie.auto.mysql.JoinSQL.EMPTY;
 
 /**
- * Created by nostalie on 17-8-17.
+ * @author nostalie on 17-8-17.
  */
 public class KylinUtils {
 
@@ -35,10 +36,7 @@ public class KylinUtils {
 
     public static String getUniqName(){
         String base = "Nostaile";
-        String random;
-        synchronized (KylinUtils.class) {
-            random = System.currentTimeMillis() + "";
-        }
+        String random = UUID.randomUUID().toString();
         return base + random;
     }
 

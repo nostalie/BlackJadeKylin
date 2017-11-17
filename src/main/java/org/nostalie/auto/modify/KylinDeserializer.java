@@ -17,7 +17,7 @@ import java.util.Iterator;
 import java.util.Map;
 
 /**
- * Created by nostalie on 17-8-21.
+ * @author nostalie on 17-8-21.
  */
 public class KylinDeserializer extends JsonDeserializer<BlackJadeKylin> {
 
@@ -38,7 +38,7 @@ public class KylinDeserializer extends JsonDeserializer<BlackJadeKylin> {
                 kylin.set(entry.getKey(), entry.getValue());
             }
         } catch (Exception e) {
-            LOGGER.error("BlackJadeKylin 反序列化失败",e);
+            LOGGER.debug("BlackJadeKylin 反序列化失败",e);
             throw new RuntimeException("BlackJadeKylin 反序列化失败",e);
         }
         return kylin;

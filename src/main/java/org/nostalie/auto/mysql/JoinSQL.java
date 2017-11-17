@@ -20,7 +20,9 @@ import java.util.Map;
 import java.util.Set;
 
 /**
- * Created by nostalie on 17-8-18.
+ * 对拼接sql的封装
+ * 包含基本的增删改查 以及where条件和limit的拼接
+ * @author  nostalie on 17-8-18.
  */
 public class JoinSQL {
 
@@ -197,48 +199,7 @@ public class JoinSQL {
     private static final String USERNAME = "nostalie";
     private static final String PASSWORD = "lsroot";
 
-    public static void main(String[] args) throws Exception {
-        ObjectMapper mapper = new ObjectMapper();
-        DatabaseInfo databaseInfo = new DatabaseInfo();
-        databaseInfo.setHost(HOST);
-        databaseInfo.setPort(PORT);
-        databaseInfo.setUserName(USERNAME);
-        databaseInfo.setPassword(PASSWORD);
-        databaseInfo.setUrl(String.format(URL, HOST, PORT));
-        TableInfo tableInfo = new TableInfo();
-        tableInfo.setTableName("kylin_t");
-        tableInfo.setDatabaseName("dbtest");
-        CRUDContext context = new CRUDContext();
-        context.setDatabaseInfo(databaseInfo);
-        context.setTableInfo(tableInfo);
-
-        QuickSand quickSand = new QuickSand(context);
-        List<ColumnInfo> columns = quickSand.getColumns();
-        System.out.println("columns is: " + mapper.writeValueAsString(columns));
-        context.getTableInfo().setColumnInfoList(columns);
-
-        RowBounds rowBounds = new RowBounds(0, 5);
-        context.setRowBounds(rowBounds);
-
-        BlackJadeKylin kylin = BlackJadeKylin.builder()
-                .setField("create_time",Date.class)
-                .setField("id",int.class)
-                .setField("name",String.class)
-                .setField("age",int.class)
-                .setField("salary", BigDecimal.class).build();
-        kylin.set("create_time",new Date())
-                .set("id",3)
-                .set("name","zhangjian")
-                .set("age",23)
-                .set("salary",new BigDecimal("123.12343"));
-
-        BlackJadeKylin condition = BlackJadeKylin.builder().setField("id", int.class).build();
-        condition.set("id", 3, int.class);
-        context.setKylin(kylin);
-        context.setCondition(condition);
-
-        //int query = quickSand.delete(context);
-        List<BlackJadeKylin> kylins = quickSand.queryWithCondition();
-        System.out.println(kylins);
+    public static void main(String[] args) {
+        System.out.println(Integer.MAX_VALUE);
     }
 }

@@ -10,7 +10,7 @@ import java.lang.reflect.Method;
 import java.util.Date;
 
 /**
- * Created by nostalie on 17-8-15.
+ * @author nostalie on 17-8-15.
  */
 public class BlackJadeKylinTemp {
     public static void main(String[] args) throws NotFoundException, CannotCompileException, ClassNotFoundException, IllegalAccessException, InstantiationException, NoSuchMethodException, InvocationTargetException, IOException {

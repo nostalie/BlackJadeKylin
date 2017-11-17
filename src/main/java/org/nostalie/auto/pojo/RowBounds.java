@@ -1,7 +1,7 @@
 package org.nostalie.auto.pojo;
 
 /**
- * Created by nostalie on 17-8-18.
+ * @author nostalie on 17-8-18.
  */
 public class RowBounds {
     private int limit;

@@ -1,7 +1,16 @@
 package org.nostalie.auto.pojo;
 
+import com.google.common.collect.Lists;
+import org.codehaus.jackson.map.ObjectMapper;
+
+import java.io.IOException;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.List;
+import java.util.Map;
+
 /**
- * Created by nostalie on 17-8-18.
+ * @author by nostalie on 17-8-18.
  */
 public class ColumnInfo {
     //数据库名
@@ -88,7 +97,7 @@ public class ColumnInfo {
     }
 
     public String getDisplayName() {
-        if(displayName == null){
+        if (displayName == null) {
             makeDisplayName();
         }
         return displayName;
@@ -98,11 +107,11 @@ public class ColumnInfo {
         this.displayName = displayName;
     }
 
-    public String makeDisplayName(){
-        if(columnComment!= null && columnComment.length()<=10){
+    public String makeDisplayName() {
+        if (columnComment != null && columnComment.length() <= 10) {
             this.displayName = columnComment;
             return columnComment;
-        }else {
+        } else {
             this.displayName = columnName;
             return columnName;
         }
@@ -121,5 +130,17 @@ public class ColumnInfo {
                 ", columnComment='" + columnComment + '\'' +
                 ", displayName='" + displayName + '\'' +
                 '}';
+    }
+
+    public static class ZK extends ColumnInfo{
+
+    }
+
+    public static void main(String[] args) throws IOException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+        ColumnInfo columnInfo = new ColumnInfo();
+        ZK zk = new ZK();
+        System.out.println(columnInfo.getClass());
+        System.out.println(zk.getClass());
+        System.out.println(columnInfo.getClass() == zk.getClass());
     }
 }
